@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.miniw.kitchen.dao.WikiDao">
+
+    <resultMap id="resultMap" type="com.miniw.kitchen.pojo.dto.WikiDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="pid" property="pid" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="INTEGER"/>
+        <result column="sort" property="sort" jdbcType="INTEGER"/>
+
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="creator_id" property="creatorId" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="updater_id" property="updaterId" jdbcType="VARCHAR"/>
+        <result column="updater" property="updater" jdbcType="VARCHAR"/>
+
+        <collection property="fullHtml" ofType="com.miniw.kitchen.pojo.dto.FullHtmlDTO">
+            <result property="id" column="full_html_id"/>
+            <result property="content" column="fullHtml_content"/>
+            <result property="url" column="fullHtml_url"/>
+            <result property="dirUrl" column="fullHtml_dirUrl"/>
+            <result property="fileName" column="fullHtml_fileName"/>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        wiki.id, wiki.url, wiki.content,
+        name, type, pid, status, sort,
+        full_html_id,
+        wiki.create_time, wiki.creator_id, wiki.creator,
+        wiki.update_time, wiki.updater, wiki.updater_id
+    </sql>
+
+    <sql id="FullHtml_Column_List" >
+        ,full_html.content as fullHtml_content,
+        full_html.dir_url as fullHtml_dirUrl,
+        full_html.file_name as fullHtml_fileName,
+        full_html.url as fullHtml_url
+    </sql>
+
+    <select id="selectAllData" resultMap="resultMap">
+        select
+            <include refid="Base_Column_List" />
+        from wiki
+        ORDER BY sort DESC
+    </select>
+
+    <select id="selectData" resultMap="resultMap">
+        select
+        <include refid="Base_Column_List" />
+        from wiki
+        <where>
+            <if test="type != null">and type = #{type}</if>
+            <if test="pid != null">and id = #{pid}</if>
+        </where>
+        ORDER BY sort DESC
+    </select>
+
+    <select id="selectById" resultMap="resultMap">
+        select
+            <include refid="Base_Column_List" />
+            <include refid="FullHtml_Column_List" />
+        from wiki left join full_html
+        on wiki.full_html_id = full_html.id
+        <where>
+            <if test="id != null">AND (wiki.id = #{id})</if>
+        </where>
+    </select>
+
+    <select id="selectAll" resultMap="resultMap">
+        select
+            <include refid="Base_Column_List" />
+            <include refid="FullHtml_Column_List" />
+        from wiki, full_html
+        on wiki.full_html_id = full_html.id
+        ORDER BY wiki.sort DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.miniw.kitchen.pojo.dto.WikiDTO">
+       insert into wiki (
+            name, status, type
+            <if test="sort !=null">,sort</if>
+            <if test="content !=null">,content</if>
+            <if test="url !=null">,url</if>
+            <if test="pid !=null">,pid</if>
+            <if test="fullHtml != null and fullHtml.id !=null">,full_html_id</if>
+            ,create_time, creator_id, creator
+            ,update_time, updater_id, updater
+        )
+        values (
+            #{name}, #{status}, #{type}
+            <if test="sort !=null">,#{sort}</if>
+            <if test="content !=null">,#{content}</if>
+            <if test="url !=null">,#{url}</if>
+            <if test="pid !=null">,#{pid}</if>
+            <if test="fullHtml != null and fullHtml.id !=null">,#{fullHtml.id}</if>
+            ,#{createTime}, #{creatorId}, #{creator}
+            ,#{updateTime}, #{updaterId}, #{updater}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.miniw.kitchen.pojo.dto.WikiDTO">
+        update wiki set
+        <if test="name != null">name = #{name},</if>
+        <if test="type != null">type = #{type},</if>
+        <if test="status != null">status = #{status}, </if>
+        <if test="content != null">content = #{content}, </if>
+        <if test="sort != null">sort = #{sort}, </if>
+        <if test="url != null">url = #{url}, </if>
+        <if test="pid != null">pid = #{pid}, </if>
+        <if test="fullHtml != null and fullHtml.id !=null">full_html_id = #{fullHtml.id}, </if>
+        update_time = #{updateTime}, updater = #{updater}, updater_id = #{updaterId}
+        where id = #{id}
+    </update>
+
+    <update id="updateStatus" parameterType="com.miniw.kitchen.pojo.dto.WikiDTO">
+        update wiki set status = #{status}  where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from wiki where id = #{id}
+    </delete>
+</mapper>

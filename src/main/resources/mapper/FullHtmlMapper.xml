@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.miniw.kitchen.dao.FullHtmlDao">
+
+    <resultMap id="resultMap" type="com.miniw.kitchen.pojo.dto.FullHtmlDTO">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="dir_url" property="dirUrl" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, content, url, file_name, dir_url
+    </sql>
+
+    <select id="selectById" resultMap="resultMap">
+        select
+            <include refid="Base_Column_List" />
+        from full_html
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.miniw.kitchen.pojo.dto.FullHtmlDTO">
+       insert into full_html (
+            content
+            <if test="url !=null">,url</if>
+            <if test="fileName !=null">,file_name</if>
+            <if test="dirUrl !=null">,dir_url</if>
+        )
+        values (
+            #{content}
+            <if test="url != null">,#{url}</if>
+            <if test="fileName != null">,#{fileName}</if>
+            <if test="dirUrl != null">,#{dirUrl}</if>
+        )
+    </insert>
+
+    <update id="update" parameterType="com.miniw.kitchen.pojo.dto.FullHtmlDTO">
+        update full_html set
+        <if test="content != null">content = #{content}</if>
+        <if test="url != null">,url = #{url}</if>
+        <if test="fileName != null">,file_name = #{fileName}</if>
+        <if test="dirUrl != null">,dir_url = #{dirUrl}</if>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from full_html where id = #{id}
+    </delete>
+</mapper>

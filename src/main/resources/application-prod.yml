@@ -1,0 +1,49 @@
+server:
+  port: 2020
+  servlet:
+    session:
+      timeout: 1m
+spring:
+  application:
+    name: wiki-college
+  redis:
+    database: 10      # Redis数据库索引（默认为0）
+    host: 10.66.128.218  # Redis服务器地址
+    port: 6379       # Redis服务器连接端口
+    password: mini!0520#       # Redis服务器连接密码（默认为空）
+    timeout:  60s      # 连接超时时间
+
+    jedis:
+      pool:
+        max-active: 1000 # 最大连接数
+        max-idle: 5       # 最大空闲线程
+        min-idle: 0      # 最小空闲线程
+        max-wait: 30s     # 最大连接阻塞时间，负值表示没有限制
+  datasource:
+    url: jdbc:mysql://10.66.130.211:3306/wiki_college?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+    password: Mini#201909CZ#
+    username: mmog
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 24
+      connection-test-query: select 1
+  data:
+    solr:
+      host: http://127.0.0.1:8983/solr   # solr 配置
+
+gameapi:
+  http:
+    pool:
+      connect-timeout: 100
+      socket-timeout: 10000
+      connection-request-timeout: 50
+  profiles:
+    active: inland
+mybatis:
+  mapper-locations: classpath*:/mapper/**Mapper.xml
+
+# 打点服务器IP
+log:
+  Ip: https://tj2.mini1.cn

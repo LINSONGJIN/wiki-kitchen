@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="10 seconds" debug="false">
+
+
+    <!-- 将日志输出在当前项目的根目录下 -->
+    <property name="contextPath" value="/data1/logs/double-festival"/>
+    <!-- 日志的上下文路径 -->
+    <property name="logPath" value="${contextPath}"/>
+    <!-- 配置日志的滚动时间 -->
+    <property name="maxHistory" value="30"/>
+
+    <!-- 打印日志到控制台 -->
+    <appender name="rootConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoder 在控制台打印日志的格式 -->
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <appender name="rootRollingInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/info/info.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/info/info.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 设置日志的滚动时间 -->
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="rootRollingError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/error/error.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/error/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 设置日志的滚动时间 -->
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!-- error/root.log文件中的日志级别是 ERROR以上的级别 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="msgInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/kafkaMsg/info/info.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/kafkaMsg/info/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 设置日志的滚动时间 -->
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="msgError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/kafkaMsg/error/error.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/kafkaMsg/error/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 设置日志的滚动时间 -->
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+    <root level="DEBUG">
+        <appender-ref ref="rootRollingError"/>
+        <appender-ref ref="rootConsole"/>
+        <appender-ref ref="rootRollingInfo"/>
+    </root>
+
+    <logger name="kafkaMsg" level="INFO,ERROR" additivity="false">
+        <appender-ref ref="msgInfo"/>
+        <appender-ref ref="msgError"/>
+    </logger>
+
+    <appender name="solrMsgInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/solrMsg/info/info.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/solrMsg/info/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 设置日志的滚动时间 -->
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="solrMsgError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/solrMsg/error/error.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/solrMsg/error/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 设置日志的滚动时间 -->
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+    <logger name="solrMsg" level="INFO,ERROR" additivity="false">
+        <appender-ref ref="solrMsgInfo"/>
+        <appender-ref ref="solrMsgError"/>
+    </logger>
+
+</configuration>

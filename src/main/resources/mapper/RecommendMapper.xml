@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.miniw.kitchen.dao.RecommendDao">
+
+    <resultMap id="resultMap" type="com.miniw.kitchen.pojo.dto.RecommendDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="type_id" property="typeId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="INTEGER"/>
+        <result column="sort" property="sort" jdbcType="INTEGER"/>
+
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="creator_id" property="creatorId" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="updater_id" property="updaterId" jdbcType="VARCHAR"/>
+        <result column="updater" property="updater" jdbcType="VARCHAR"/>
+
+        <collection property="fullHtml" ofType="com.miniw.kitchen.pojo.dto.FullHtmlDTO">
+            <result property="id" column="full_html_id"/>
+            <result property="content" column="fullHtml_content"/>
+            <result property="url" column="fullHtml_url"/>
+            <result property="dirUrl" column="fullHtml_dirUrl"/>
+            <result property="fileName" column="fullHtml_fileName"/>
+        </collection>
+
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        recommend.id,
+        recommend.url,
+        recommend.content,
+        recommend.create_time, recommend.creator_id, recommend.creator,
+        recommend.update_time, recommend.updater, recommend.updater_id,
+        name, type_id, status, sort, full_html_id
+    </sql>
+
+    <sql id="FullHtml_Column_List" >
+        ,full_html.content as fullHtml_content,
+        full_html.dir_url as fullHtml_dirUrl,
+        full_html.file_name as fullHtml_fileName,
+        full_html.url as fullHtml_url
+    </sql>
+
+    <sql id="Base_List_Without_id" >
+        name, url, type_id, status, sort, content, create_time, creator_id, creator, update_time, updater, updater_id
+    </sql>
+
+    <select id="selectById" resultMap="resultMap">
+        select
+            <include refid="Base_Column_List" />
+            <include refid="FullHtml_Column_List" />
+        from recommend left join full_html
+        on recommend.full_html_id = full_html.id
+        <where>
+            <if test="id != null">and recommend.id = #{id}</if>
+        </where>
+    </select>
+
+    <select id="selectLimit" resultMap="resultMap">
+        select
+            <include refid="Base_Column_List" />
+        from recommend
+        <where>
+            <if test="typeId != null">and type_id = #{typeId}</if>
+        </where>
+        ORDER BY sort DESC LIMIT #{start}, #{pageNum}
+    </select>
+
+    <select id="selectAllCount" resultType="java.lang.Integer">
+        select count(id) cnt from recommend
+        <where>
+            <if test="typeId != null">and type_id = #{typeId}</if>
+        </where>
+    </select>
+
+    <select id="selectAll" resultMap="resultMap">
+        select
+            <include refid="Base_Column_List" />
+            <include refid="FullHtml_Column_List" />
+        from recommend LEFT JOIN full_html
+        on recommend.full_html_id = full_html.id
+        ORDER BY recommend.sort DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.miniw.kitchen.pojo.dto.RecommendDTO">
+       insert into recommend (
+            name, url, type_id, status
+            <if test="sort !=null">,sort</if>
+            <if test="content !=null">,content</if>
+            <if test="fullHtml != null and fullHtml.id !=null">,full_html_id</if>
+            ,create_time, creator_id, creator
+            ,update_time, updater_id, updater
+        )
+        values (
+            #{name}, #{url}, #{typeId}, #{status}
+            <if test="sort !=null">,#{sort}</if>
+            <if test="content !=null">,#{content}</if>
+            <if test="fullHtml != null and fullHtml.id !=null">,#{fullHtml.id}</if>
+            ,#{createTime}, #{creatorId}, #{creator}
+            ,#{updateTime}, #{updaterId}, #{updater}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.miniw.kitchen.pojo.dto.RecommendDTO">
+        update recommend set
+        update_time = #{updateTime}, updater = #{updater}, updater_id = #{updaterId}
+        <if test="name != null">,name = #{name}</if>
+        <if test="url != null">,url = #{url}</if>
+        <if test="typeId != null">,type_id = #{typeId}</if>
+        <if test="status != null">,status = #{status}</if>
+        <if test="content != null">,content = #{content}</if>
+        <if test="sort != null">,sort = #{sort}</if>
+        <if test="fullHtml != null and fullHtml.id !=null">,full_html_id = #{fullHtml.id}</if>
+        where id = #{id}
+    </update>
+
+    <update id="updateStatus" parameterType="com.miniw.kitchen.pojo.dto.RecommendDTO">
+        update recommend set status = #{status}  where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from recommend
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="typeId != null">and type_id = #{typeId}</if>
+        </where>
+    </delete>
+</mapper>

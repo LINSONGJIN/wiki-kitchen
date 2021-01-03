@@ -1,0 +1,59 @@
+server:
+  port: 2021
+  servlet:
+    session:
+      timeout: 1m
+spring:
+  application:
+    name: wiki-college
+  redis:
+    database: 10      # Redis数据库索引（默认为0）
+    host: 10.0.0.203  # Redis服务器地址
+    port: 6379       # Redis服务器连接端口
+    password: miniwan123       # Redis服务器连接密码（默认为空）
+    timeout:  60s      # 连接超时时间
+    jedis:
+      pool:
+        max-active: 10 # 最大连接数
+        max-idle: 5       # 最大空闲线程
+        min-idle: 0      # 最小空闲线程
+        max-wait: 1s     # 最大连接阻塞时间，负值表示没有限制
+
+  datasource:
+    url: jdbc:mysql://10.0.0.203:3306/wiki_college?useUnicode=true&characterEncoding=utf8
+    password: Miniwan_123
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 10
+      connection-test-query: select 1
+  data:
+    solr:
+      host: http://10.0.0.203:8983/solr   # solr 配置
+  kafka:
+    bootstrap-servers: 10.0.0.203:9092
+    consumer:
+      group-id: kitchen
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-commit-interval: 100
+
+gameapi:
+  http:
+    pool:
+      connect-timeout: 500
+      socket-timeout: 10000
+      connection-request-timeout: 500
+  profiles:
+    active: test
+mybatis:
+  mapper-locations: classpath*:/mapper/**Mapper.xml
+# 打点服务器IP
+log:
+  Ip: http://120.24.64.132:8080
+
+
